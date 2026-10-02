@@ -30,10 +30,20 @@ jobs:
         run: |
           echo "android.useAndroidX=true" > project/KitchenERP_Android_Project/KitchenERP_Android_Project/gradle.properties
 
+      - name: Force Java 17
+        run: |
+          cat > /tmp/force-java17.gradle <<'EOF'
+          allprojects {
+              tasks.withType(JavaCompile).configureEach {
+                  options.release = 17
+              }
+          }
+          EOF
+
       - name: Build APK
         working-directory: project/KitchenERP_Android_Project/KitchenERP_Android_Project
         run: |
-          gradle assembleDebug
+          gradle -I /tmp/force-java17.gradle assembleDebug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
