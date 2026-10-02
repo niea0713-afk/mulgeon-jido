@@ -30,12 +30,17 @@ jobs:
         run: |
           echo "android.useAndroidX=true" > project/KitchenERP_Android_Project/KitchenERP_Android_Project/gradle.properties
 
-      - name: Force Java 17
+      - name: Fix Java and Kotlin targets
         run: |
-          cat > /tmp/force-java17.gradle <<'EOF'
+          cat > /tmp/fix-java.gradle <<'EOF'
           allprojects {
               tasks.withType(JavaCompile).configureEach {
-                  options.release = 17
+                  sourceCompatibility = "17"
+                  targetCompatibility = "17"
+              }
+
+              tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+                  kotlinOptions.jvmTarget = "17"
               }
           }
           EOF
@@ -43,7 +48,7 @@ jobs:
       - name: Build APK
         working-directory: project/KitchenERP_Android_Project/KitchenERP_Android_Project
         run: |
-          gradle -I /tmp/force-java17.gradle assembleDebug
+          gradle -I /tmp/fix-java.gradle assembleDebug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
