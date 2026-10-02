@@ -26,6 +26,10 @@ jobs:
         with:
           gradle-version: '8.13'
 
+      - name: Enable AndroidX
+        run: |
+          echo "android.useAndroidX=true" > project/KitchenERP_Android_Project/KitchenERP_Android_Project/gradle.properties
+
       - name: Build APK
         working-directory: project/KitchenERP_Android_Project/KitchenERP_Android_Project
         run: |
