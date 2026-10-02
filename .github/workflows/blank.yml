@@ -21,28 +21,18 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Find Gradle wrapper
-        run: |
-          echo "Searching for gradlew..."
-          find project -name gradlew -type f -print
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.13'
 
       - name: Build APK
+        working-directory: project/KitchenERP_Android_Project/KitchenERP_Android_Project
         run: |
-          GRADLEW=$(find project -name gradlew -type f | head -1)
-
-          if [ -z "$GRADLEW" ]; then
-            echo "ERROR: gradlew was not found."
-            find project -maxdepth 5 -type f | head -100
-            exit 1
-          fi
-
-          chmod +x "$GRADLEW"
-          PROJECT_DIR=$(dirname "$GRADLEW")
-          cd "$PROJECT_DIR"
-          ./gradlew assembleDebug
+          gradle assembleDebug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: app-debug
-          path: project/**/build/outputs/apk/**/*.apk
+          path: project/KitchenERP_Android_Project/KitchenERP_Android_Project/**/build/outputs/apk/**/*.apk
